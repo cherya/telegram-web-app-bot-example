@@ -2,6 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <link rel="icon" href="/telegram-web-app-bot-example/favicon.png" />
+    
+		<link rel="modulepreload" href="/telegram-web-app-bot-example/_app/immutable/entry/start.xm13c8me.js">
+		<link rel="modulepreload" href="/telegram-web-app-bot-example/_app/immutable/chunks/scheduler.k-kUyWhY.js">
+		<link rel="modulepreload" href="/telegram-web-app-bot-example/_app/immutable/chunks/singletons.twq0_TL6.js">
+		<link rel="modulepreload" href="/telegram-web-app-bot-example/_app/immutable/entry/app.SgSqiLKe.js">
+		<link rel="modulepreload" href="/telegram-web-app-bot-example/_app/immutable/chunks/index.STZKi_aV.js">
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <meta name="format-detection" content="telephone=no"/>
@@ -334,7 +341,26 @@
 </head>
 
 <body class="" style="visibility: hidden;">
+<div style="display: contents">
+			<script>
+				{
+					__sveltekit_1u7x7hy = {
+						assets: "/telegram-web-app-bot-example",
+						base: "/telegram-web-app-bot-example",
+						env: null
+					};
 
+					const element = document.currentScript.parentElement;
+
+					Promise.all([
+						import("/telegram-web-app-bot-example/_app/immutable/entry/start.xm13c8me.js"),
+						import("/telegram-web-app-bot-example/_app/immutable/entry/app.SgSqiLKe.js")
+					]).then(([kit, app]) => {
+						kit.start(app, element);
+					});
+				}
+			</script>
+		</div>
 <section id="top_sect" class="second">
     <button id="main_btn" onclick="DemoApp.sendMessage('');">Send «Hello, World!»</button>
     <button id="with_webview_btn" onclick="DemoApp.sendMessage('', true);">Send «Hello, World!» with inline webview button</button>
