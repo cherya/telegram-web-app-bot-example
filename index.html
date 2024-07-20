@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" href="./favicon.png" />
+  <script src="https://telegram.org/js/telegram-web-app.js?1"></script>
+  
+		<link href="./_app/immutable/assets/2.ogF3wPq7.css" rel="stylesheet">
+		<link rel="modulepreload" href="./_app/immutable/entry/start.6rJyeqZz.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/scheduler.k-kUyWhY.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.jIjExpAC.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/app.3c-3pr1x.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/index.m1ONKgFu.js">
+		<link rel="modulepreload" href="./_app/immutable/nodes/0.gCuQgfiq.js">
+		<link rel="modulepreload" href="./_app/immutable/nodes/2.QDIN-hzO.js">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="MobileOptimized" content="176" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title></title>
+  <script>
+    function setThemeClass() {
+      document.documentElement.className = Telegram.WebApp.colorScheme;
+    }
+
+    Telegram.WebApp.onEvent('themeChanged', setThemeClass);
+    setThemeClass();
+  </script>
+  <style>
+
+  </style>
+</head>
+
+<body class="" style="visibility: hidden;">
+  <div style="display: contents">     <div class="container"><section id="top_sect" class="second"><button id="main_btn" onclick="DemoApp.sendMessage('');" data-svelte-h="svelte-1lcrk0">Send «Hello, World!»</button> <button id="with_webview_btn" onclick="DemoApp.sendMessage('', true);" data-svelte-h="svelte-zutttf">Send «Hello, World!» with inline webview button</button> <button id="data_btn" onclick="DemoApp.sendTime(true);" data-svelte-h="svelte-125ccpw">Send current time to bot (x10)</button> <button onclick="DemoApp.expand();" data-svelte-h="svelte-1qkzyz3">Expand Webview</button> <button onclick="DemoApp.toggleMainButton(this);" data-svelte-h="svelte-1qs826o">Hide Main Button</button> <input type="text" placeholder="Input text in regular input..." id="regular_field"> <div class="input" contenteditable="true" data-placeholder="Input text in contenteditable field..." id="text_field"></div> <div id="peer_wrap" style="display:none" data-svelte-h="svelte-er9q7j"><img id="peer_photo" class="chat_img" src=""> <span id="peer_name"></span></div> <div class="sect_row">Header: <select id="header_color_sel"><option value="bg_color" selected data-svelte-h="svelte-12yzkyt">bg_color</option><option value="secondary_bg_color" data-svelte-h="svelte-1x10bni">secondary_bg_color</option></select></div> <div class="sect_row">Background: <input type="color" id="bg_color_input"> <select id="bg_color_sel"><option value="bg_color" selected data-svelte-h="svelte-12yzkyt">bg_color</option><option value="secondary_bg_color" data-svelte-h="svelte-1x10bni">secondary_bg_color</option><option value="custom" id="bg_color_val" data-svelte-h="svelte-z7gcmv">custom...</option></select></div></section> <section data-svelte-h="svelte-1217p0s"><div id="btn_status" class="hint" style="display: none;"></div> <p>Test links:</p> <ul><li><a id="regular_link" href="">Regular link #2</a> (opens inside webview)</li> <li><a href="https://telegram.org/" target="_blank">target=&quot;_blank&quot; link</a>
+        (opens outside webview)</li> <li><a href="javascript:window.open('https://telegram.org/');">window.open() link</a> (opens outside webview)</li> <li><a href="https://t.me/like">LikeBot t.me link</a> (opens inside Telegram
+        app)</li> <li><a href="javascript:Telegram.WebApp.openTelegramLink('https://t.me/vote');">web_app_open_tg_link()</a> (opens inside Telegram app)</li> <li><a href="javascript:Telegram.WebApp.openLink('https://google.com/');">web_app_open_link()</a> (opens outside webview)</li> <li><a href="tg://resolve?domain=vote">VoteBot tg:// link</a> (does not open)</li></ul> <p>Test permissions:</p> <ul><li><a href="javascript:;" onclick="return DemoApp.requestLocation(this);">Request Location</a> <span></span></li> <li><a href="javascript:;" onclick="return DemoApp.requestVideo(this);">Request Video</a> <span></span></li> <li><a href="javascript:;" onclick="return DemoApp.requestAudio(this);">Request Audio</a> <span></span></li> <li><a href="javascript:;" onclick="return DemoApp.requestAudioVideo(this);">Request Audio+Video</a> <span></span></li> <li><a href="javascript:;" onclick="return DemoApp.testClipboard(this);" id="clipboard_test">Read from clipboard</a> <span></span></li></ul> <p>Test alerts:</p> <div class="columns"><ul><li><a href="javascript:;" onclick="alert('Hello!');">alert</a></li> <li><a href="javascript:;" onclick="confirm('Are you sure?');">confirm</a></li> <li><a href="javascript:;" onclick="prompt('How old are you?');">prompt</a></li></ul> <ul><li><a href="javascript:;" onclick="DemoApp.showAlert('Hello!');">showAlert</a></li> <li><a href="javascript:;" onclick="DemoApp.showConfirm('Are you sure?');">showConfirm</a></li> <li><a href="javascript:;" onclick="DemoApp.requestWriteAccess();">requestWriteAccess</a></li> <li><a href="javascript:;" onclick="DemoApp.requestContact();">requestContact</a></li> <li><a href="javascript:;" onclick="DemoApp.showPopup();">showPopup</a></li> <li><a href="javascript:;" onclick="DemoApp.showScanQrPopup();">showScanQrPopup</a></li> <li><a href="javascript:;" onclick="DemoApp.showScanQrPopup(true);">showScanQrPopup (links only)</a></li></ul></div> <p>Haptics:</p> <ul><li>Impact: <a href="javascript:Telegram.WebApp.HapticFeedback.impactOccurred('heavy');">heavy</a>,  
+        <a href="javascript:Telegram.WebApp.HapticFeedback.impactOccurred('light');">light</a>,  
+        <a href="javascript:Telegram.WebApp.HapticFeedback.impactOccurred('medium');">medium</a>,  
+        <a href="javascript:Telegram.WebApp.HapticFeedback.impactOccurred('rigid');">rigid</a>,  
+        <a href="javascript:Telegram.WebApp.HapticFeedback.impactOccurred('soft');">soft</a><br><br></li> <li>Notification: <a href="javascript:Telegram.WebApp.HapticFeedback.notificationOccurred('error');">error</a>,  
+        <a href="javascript:Telegram.WebApp.HapticFeedback.notificationOccurred('success');">success</a>,  
+        <a href="javascript:Telegram.WebApp.HapticFeedback.notificationOccurred('warning');">warning</a><br><br></li> <li>Selection: <a href="javascript:Telegram.WebApp.HapticFeedback.selectionChanged();">changed</a><br><br></li></ul> <pre><code id="webview_data"></code></pre> <div class="hint">Data passed to webview.
+      <span id="webview_data_status" class="status_need">Checking hash...</span></div> <pre><code id="theme_data"></code></pre> <div class="hint">Theme params</div> <div class="hint">Version: <span id="ver"></span>, platform: <span id="platform"></span></div></section> <div class="viewport-border"></div> <div class="viewport-stable_border"></div> </div> 
+			
+			<script>
+				{
+					__sveltekit_6j5qc9 = {
+						assets: "/telegram-web-app-bot-example",
+						base: new URL(".", location).pathname.slice(0, -1),
+						env: null
+					};
+
+					const element = document.currentScript.parentElement;
+
+					const data = [null,null];
+
+					Promise.all([
+						import("./_app/immutable/entry/start.6rJyeqZz.js"),
+						import("./_app/immutable/entry/app.3c-3pr1x.js")
+					]).then(([kit, app]) => {
+						kit.start(app, element, {
+							node_ids: [0, 2],
+							data,
+							form: null,
+							error: null
+						});
+					});
+				}
+			</script>
+		</div>
+</body>
+
+</html>
