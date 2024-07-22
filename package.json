@@ -1,32 +1,33 @@
 {
-	"name": "web",
-	"version": "0.0.1",
-	"private": true,
-	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build",
-		"preview": "vite preview",
-		"deploy": "pnpm build && pnpm dlx gh-pages -d build -t true"
-	},
-	"devDependencies": {
-		"@prgm/sveltekit-progress-bar": "^2.0.0",
-		"@skeletonlabs/skeleton": "^2.10.2",
-		"@skeletonlabs/tw-plugin": "^0.4.0",
-		"@sveltejs/adapter-auto": "^3.0.0",
-		"@sveltejs/kit": "^2.0.0",
-		"@sveltejs/vite-plugin-svelte": "^3.0.0",
-		"autoprefixer": "^10.4.19",
-		"flowbite": "^2.2.1",
-		"flowbite-svelte": "^0.44.21",
-		"postcss": "^8.4.39",
-		"svelte": "^4.2.7",
-		"tailwindcss": "^3.4.6",
-		"vite": "^5.0.3"
-	},
-	"type": "module",
-	"dependencies": {
-		"@fortawesome/fontawesome-free": "^6.6.0",
-		"@sveltejs/adapter-static": "^3.0.2",
-		"gh-pages": "^6.1.1"
-	}
+  "name": "web",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "pnpm build && pnpm dlx gh-pages -d build -t true"
+  },
+  "devDependencies": {
+    "@prgm/sveltekit-progress-bar": "^2.0.0",
+    "@skeletonlabs/skeleton": "^2.10.2",
+    "@skeletonlabs/tw-plugin": "^0.4.0",
+    "@sveltejs/adapter-auto": "^3.0.0",
+    "@sveltejs/kit": "^2.0.0",
+    "@sveltejs/vite-plugin-svelte": "^3.0.0",
+    "autoprefixer": "^10.4.19",
+    "flowbite": "^2.2.1",
+    "flowbite-svelte": "^0.44.21",
+    "postcss": "^8.4.39",
+    "svelte": "^4.2.7",
+    "tailwindcss": "^3.4.6",
+    "vite": "^5.0.3",
+    "@rollup/rollup-darwin-x64": "4.19.0"
+  },
+  "type": "module",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.6.0",
+    "@sveltejs/adapter-static": "^3.0.2",
+    "gh-pages": "^6.1.1"
+  }
 }
