@@ -9,6 +9,7 @@ const config = {
 		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
 		adapter: adapter({
       // fallback: 'src/index.html'
+      runtime: 'nodejs18.x',
     }),
     paths: {
       base: process.env.NODE_ENV === 'production' ? '/telegram-web-app-bot-example' : '',
