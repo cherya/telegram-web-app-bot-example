@@ -3,15 +3,15 @@
 
 <head>
   <meta charset="utf-8">
-  <link rel="icon" href="./favicon.png" />
+  <link rel="icon" href="../favicon.png" />
   <script src="https://telegram.org/js/telegram-web-app.js?1"></script>
   
-		<link rel="modulepreload" href="./_app/immutable/entry/start.YJJgKztF.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/scheduler.i60jWgnB.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.rn_JQ-lX.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/index._73hDoBv.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/app.IdwXUtL-.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/index.K2uzg1Tt.js">
+		<link rel="modulepreload" href="../_app/immutable/entry/start.YJJgKztF.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/scheduler.i60jWgnB.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/singletons.rn_JQ-lX.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/index._73hDoBv.js">
+		<link rel="modulepreload" href="../_app/immutable/entry/app.IdwXUtL-.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/index.K2uzg1Tt.js">
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="format-detection" content="telephone=no" />
@@ -39,15 +39,15 @@
 				{
 					__sveltekit_1uggkyk = {
 						assets: "/telegram-web-app-bot-example",
-						base: new URL(".", location).pathname.slice(0, -1),
+						base: new URL("..", location).pathname.slice(0, -1),
 						env: null
 					};
 
 					const element = document.currentScript.parentElement;
 
 					Promise.all([
-						import("./_app/immutable/entry/start.YJJgKztF.js"),
-						import("./_app/immutable/entry/app.IdwXUtL-.js")
+						import("../_app/immutable/entry/start.YJJgKztF.js"),
+						import("../_app/immutable/entry/app.IdwXUtL-.js")
 					]).then(([kit, app]) => {
 						kit.start(app, element);
 					});
