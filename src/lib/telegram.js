@@ -1,4 +1,5 @@
 import { writable } from "svelte/store";
+import { TgUserStore } from "./stores/tg-user-store";
 
 export const AppState = writable({
   valid: null,
@@ -98,20 +99,15 @@ function getInitData() {
 
 export async function CheckInitData() {
   let initData = getInitData();
-  
+
   const response = await fetch(`/api/validate?${initData}`, {
-		method: 'GET',
-		headers: {
-			'content-type': 'application/json'
-		}
-	});
+    method: 'GET',
+    headers: {
+      'content-type': 'application/json'
+    }
+  });
 
-	let respData = await response.json();
-
-  if (response.ok) {
-    let user = JSON.parse(respData.data.user);
-    respData.data.user = user;
-  }
+  let respData = await response.json();
 
   return respData;
 }
