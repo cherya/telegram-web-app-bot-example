@@ -11,9 +11,7 @@ const config = {
       // fallback: 'src/index.html'
       runtime: 'nodejs18.x',
     }),
-    paths: {
-      base: process.env.NODE_ENV === 'production' ? '/telegram-web-app-bot-example' : '',
-    }
+    paths: {}
 	},
   preprocess: vitePreprocess(),
 };
