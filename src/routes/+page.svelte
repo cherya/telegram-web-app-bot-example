@@ -2,48 +2,25 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 
 <script>
-  import { TgApp, AppState, CheckInitData } from "$lib/telegram";
-  import { onDestroy } from "svelte";
+  import { TgApp, CheckInitData } from "$lib/telegram";
   import { Avatar } from "@skeletonlabs/skeleton";
+  import { TgUserStore } from "$lib/stores/tg-user-store";
 
-  let valid = false;
-  let userData = {};
-  let sendData = "example";
+  const userStore = TgUserStore();
 
-  let unsubscribe = AppState.subscribe((value) => {
-    valid = value.valid;
-    userData = value.data.user;
-  });
-
-  let initData = TgApp.initData;
-  if (initData === "") {
-    initData =
-      "query_id=AAEMjsEBAAAAAAyOwQGvrIHL&user=%7B%22id%22%3A29462028%2C%22first_name%22%3A%22Ilia%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22cherya%22%2C%22language_code%22%3A%22en%22%2C%22is_premium%22%3Atrue%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1721554069&hash=b9a1a2753acbd55e974fb118f3cc03ea484f98cac8e5c89f5aede16b4b8c2dab";
-  }
-
-  let validatePromise = CheckInitData(initData);
-
-  validatePromise
-    .then(() => {
-      TgApp.init();
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-
+  let sendData = "example send data";
+  	
   function validateData(e) {
     try {
-      validatePromise = CheckInitData(initData);
+      CheckInitData();
     } catch (error) {
       console.error(error);
     }
   }
-
-  onDestroy(unsubscribe);
 </script>
 
 <div class="container container mx-auto p-6 space-y-4">
-  {#if valid === false}
+  {#if $userStore.isValid === false}
     <aside class="alert variant-filled-error rounded-md">
       <!-- Icon -->
       <div class="fa-solid fa-triangle-exclamation text-4xl" />
@@ -57,20 +34,20 @@
 
   <div class="flex">
     <div class="relative inline-block flex-none">
-      {#if valid === true}
+      {#if $userStore.isValidTgUser === true}
         <span class="badge-icon variant-filled-success absolute -bottom-0 -left-0 z-10"></span>
-      {:else if valid === false}
+      {:else if $userStore.isValidTgUser === false}
         <span class="badge-icon variant-filled-error absolute -bottom-0 -left-0 z-10"></span>
-      {:else if valid === null}
+      {:else if $userStore.isValidTgUser   === null}
         <span class="badge-icon variant-filled-warning animate-pulse absolute -bottom-0 -left-0 z-10"></span>
       {/if}
   
       <Avatar />
     </div>
-    {#if valid === true}
+    {#if $userStore.isValidTgUser === true}
       <div class="flex-1 ml-8">
-        <h1 class="text-2xl font-bold">{userData.first_name} {userData.last_name}</h1>
-        <p class="text-gray-500">@{userData.username}</p>
+        <h1 class="text-2xl font-bold">{$userStore.user.first_name} {$userStore.user.last_name}</h1>
+        <p class="text-gray-500">@{$userStore.user.username}</p>
       </div>
     {:else}
       <div class="flex-1 ml-8">
@@ -139,15 +116,13 @@
   <button class="btn variant-filled rounded-md w-full p-2" type="button" on:click={() => TgApp.sendData(sendData)}>Send data from input to bot</button>
 
   <hr class="!border-t-4" />
-  <h6 class="h6">initData:</h6>
-  <pre class="pre rounded-md">{initData}</pre>
 
   <h6 class="h6">Validated user data:</h6>
-  {#if valid === true}
-    <pre class="pre rounded-md">{JSON.stringify(userData, null, 2)}</pre>
-  {:else if valid === false}
+  {#if $userStore.isValidTgUser === true}
+    <pre class="pre rounded-md">{JSON.stringify($userStore.user, null, 2)}</pre>
+  {:else if $userStore.isValidTgUser === false}
     <div class="text-center">validation failded</div> 
-  {:else if valid === null}
+  {:else if $userStore.isValidTgUser === null}
     <div class="placeholder animate-pulse rounded-md" />
   {/if}
 
