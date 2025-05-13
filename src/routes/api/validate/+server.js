@@ -42,11 +42,9 @@ export async function GET({ url, cookies }) {
 
     data.user = user;
     session.user = user;
-    session.expirationDate = Date.now() + 60 * 1000;
+    session.expirationDate = Date.now() + 60 * 5 * 1000; // 5 minutes
 
     await sessionStore.set(sessionId, session);
-
-    console.log('session', sessionId, session);
 
     cookies.set('session', sessionId, {
       httpOnly: true,

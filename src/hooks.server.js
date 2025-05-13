@@ -24,11 +24,7 @@ export const handle = async ({ event, resolve }) => {
     await attachUserToRequestEvent(sessionId, event)
   }
 
-  if (!event.locals.session) {
-    console.log('session not valid', event.locals)
-    cookies.delete('session', { path: '/' })
-  }
-
+  // TODO: questionable: session key should just expire in redis?
   if (event.locals.session && event.locals.session.expirationDate < Date.now()) {
     console.log('session expired')
     cookies.delete('session', { path: '/' })

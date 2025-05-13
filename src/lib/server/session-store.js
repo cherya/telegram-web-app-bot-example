@@ -14,12 +14,11 @@ class SessionStore {
   }
 
   async set(sessionId, data) {
-    await this.client.set(sessionId, JSON.stringify(data), { ex: 60 * 5 });
+    await this.client.set(sessionId, data, { ex: 60 * 5 });
   }
 
   async get(sessionId) {
-    const data = await this.client.get(sessionId);
-    return data;
+    return await this.client.get(sessionId);
   }
 }
 
