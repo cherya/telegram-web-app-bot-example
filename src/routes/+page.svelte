@@ -51,7 +51,7 @@
         ></span>
       {/if}
 
-      <Avatar />
+      <Avatar src={userStore.user.photo_url} />
     </div>
     {#if $userStore.valid === true}
       <div class="flex-1 ml-8">
@@ -180,11 +180,7 @@
 
   <h6 class="h6">Validated user data:</h6>
   {#if $userStore.valid === true}
-    <pre class="pre rounded-md">{JSON.stringify(
-        $userStore.user,
-        null,
-        2,
-      )}</pre>
+    <pre class="pre rounded-md">{JSON.stringify($userStore.user, null, 2)}</pre>
   {:else if $userStore.valid === false}
     <div class="text-center">validation failded</div>
   {:else if $userStore.valid === null}
