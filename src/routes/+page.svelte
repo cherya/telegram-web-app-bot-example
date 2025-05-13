@@ -51,7 +51,7 @@
         ></span>
       {/if}
 
-      <Avatar src={userStore.user.photo_url} />
+      <Avatar src={$userStore.user.photo_url} />
     </div>
     {#if $userStore.valid === true}
       <div class="flex-1 ml-8">
