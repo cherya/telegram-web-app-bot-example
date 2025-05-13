@@ -23,8 +23,11 @@ import crypto from 'crypto';
  * @property {string} allows_write_to_pm - Indicates if the user is allowed to write to private messages.
  */
 
-export async function GET({ url, cookies }) {
-  // await new Promise(r => setTimeout(r, 1000));
+export async function GET({ url, cookies, locals }) {
+  if (locals.session) {
+    console.log('session found in locals')
+    return json(locals.session);
+  }
 
   let { isValid, data } = Validator.validateData(url.searchParams.toString(), 60 * 60 * 24 * 30);
 
@@ -57,4 +60,4 @@ export async function GET({ url, cookies }) {
   }
 
   return json(session);
-};  
+};
