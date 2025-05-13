@@ -51,6 +51,7 @@ export async function GET({ url, cookies }) {
       sameSite: 'None',
       secure: true,
       partitioned: true,
+      expires: new Date(session.expirationDate),
       path: '/'
     })
   }
