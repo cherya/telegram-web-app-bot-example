@@ -14,14 +14,12 @@ class SessionStore {
   }
 
   async set(sessionId, data) {
-    console.log('set session', sessionId, data);
     await this.client.set(sessionId, JSON.stringify(data), { ex: 60 * 5 });
   }
 
   async get(sessionId) {
     const data = await this.client.get(sessionId);
-    console.log('get session', sessionId, data);
-    return data ? JSON.parse(data) : null;
+    return data;
   }
 }
 
