@@ -2,8 +2,10 @@ import { sessionStore } from '$lib/server/session-store'
 
 // Attach authorization to each server request (role may have changed)
 async function attachUserToRequestEvent(sessionId, event) {
-  if (sessionStore[sessionId]) {
-    event.locals.session = sessionStore[sessionId]
+  const session = await sessionStore.get(sessionId)
+
+  if (session) {
+    event.locals.session = session
   } else {
     event.locals.session = {
       valid: false,
@@ -23,7 +25,7 @@ export const handle = async ({ event, resolve }) => {
   }
 
   if (!event.locals.session) {
-    console.log('session not valid')
+    console.log('session not valid', event.locals)
     cookies.delete('session', { path: '/' })
   }
 

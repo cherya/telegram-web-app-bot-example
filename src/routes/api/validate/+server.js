@@ -44,7 +44,7 @@ export async function GET({ url, cookies }) {
     session.user = user;
     session.expirationDate = Date.now() + 60 * 1000;
 
-    sessionStore[sessionId] = session;
+    await sessionStore.set(sessionId, session);
 
     console.log('session', sessionId, session);
 
