@@ -3,6 +3,7 @@
 !.env.example
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+.vercel/*
 
 # Created by https://www.toptal.com/developers/gitignore/api/svelte,node,macos
 # Edit at https://www.toptal.com/developers/gitignore?templates=svelte,node,macos

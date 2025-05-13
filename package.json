@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "@prgm/sveltekit-progress-bar": "^2.0.0",
-    "@rollup/rollup-darwin-x64": "4.19.0",
+    "@rollup/rollup-darwin-x64": "4.40.2",
     "@skeletonlabs/skeleton": "^2.11.0",
     "@skeletonlabs/tw-plugin": "^0.4.1",
     "@sveltejs/adapter-auto": "^3.3.1",
