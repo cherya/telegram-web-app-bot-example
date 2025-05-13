@@ -52,6 +52,7 @@ export async function GET({ url, cookies }) {
       httpOnly: true,
       sameSite: 'None',
       secure: true,
+      partitioned: true,
       path: '/'
     })
   }
