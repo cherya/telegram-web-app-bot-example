@@ -50,7 +50,8 @@ export async function GET({ url, cookies }) {
 
     cookies.set('session', sessionId, {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'None',
+      secure: true,
       path: '/'
     })
   }
