@@ -7,18 +7,18 @@
 
   const userStore = TgUserStore();
 
-  $userStore = data
+  $userStore = data;
 
   onMount(async () => {
     if (!data.valid) {
       let resp = await CheckInitData();
-      
+
       userStore.set(resp);
     }
 
     TgApp.init();
-  })
-  
+    TgApp.ready();
+  });
 </script>
 
 <slot></slot>

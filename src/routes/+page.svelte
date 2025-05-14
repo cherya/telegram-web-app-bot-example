@@ -10,7 +10,7 @@
 
   let sendData = "example send data";
 
-  async function validateData(e) {
+  async function reValidateData(e) {
     userStore.set({ valid: null, user: {} });
 
     let resp = await CheckInitData();
@@ -19,7 +19,7 @@
   }
 </script>
 
-<div class="container container mx-auto p-6 space-y-4">
+<div class="container mx-auto p-6 space-y-4">
   {#if $userStore.valid === false}
     <aside class="alert variant-filled-error rounded-md">
       <!-- Icon -->
@@ -188,7 +188,7 @@
   {/if}
 
   <button
-    on:click={validateData}
+    on:click={reValidateData}
     type="button"
     class="btn variant-filled rounded-md">Re-validate data</button
   >

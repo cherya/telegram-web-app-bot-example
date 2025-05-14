@@ -16,11 +16,13 @@ export const TgApp = {
   BackButton: Telegram.WebApp.BackButton,
 
   init(options) {
-    Telegram.WebApp.ready();
     Telegram.WebApp.MainButton.setParams({
       text: 'Close',
       is_visible: true
     }).onClick(TgApp.close);
+  },
+  ready() {
+    Telegram.WebApp.ready();
   },
   expand() {
     Telegram.WebApp.expand();
