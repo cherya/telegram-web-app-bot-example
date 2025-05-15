@@ -7,7 +7,6 @@ import crypto from 'crypto';
  * Represents a user session.
  * @typedef {Object} Session
  * @property {boolean} valid - Indicates if the session is valid.
- * @property {number} expirationDate - The expiration date of the session.
  * @property {User} user - The user object associated with the session.
  */
 
@@ -25,7 +24,6 @@ import crypto from 'crypto';
 
 export async function GET({ url, cookies, locals }) {
   if (locals.session) {
-    console.log('session found in locals')
     return json(locals.session);
   }
 
@@ -45,7 +43,8 @@ export async function GET({ url, cookies, locals }) {
 
     data.user = user;
     session.user = user;
-    session.expirationDate = Date.now() + 60 * 5 * 1000; // 5 minutes
+
+    let expirationDate = Date.now() + 60 * 5 * 1000; // 5 minutes
 
     await sessionStore.set(sessionId, session);
 
@@ -54,7 +53,7 @@ export async function GET({ url, cookies, locals }) {
       sameSite: 'None',
       secure: true,
       partitioned: true,
-      expires: new Date(session.expirationDate),
+      expires: new Date(expirationDate),
       path: '/'
     })
   }

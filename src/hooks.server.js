@@ -17,17 +17,11 @@ async function attachUserToRequestEvent(sessionId, event) {
 // Invoked for each endpoint called and initially for SSR router
 export const handle = async ({ event, resolve }) => {
   const { cookies } = event
-  const sessionId = cookies.get('session')
+  const sessionId = cookies.get('session');
 
-  // before endpoint or page is called
+  // before endpoint or page is called 
   if (sessionId) {
-    await attachUserToRequestEvent(sessionId, event)
-  }
-
-  // TODO: questionable: session key should just expire in redis?
-  if (event.locals.session && event.locals.session.expirationDate < Date.now()) {
-    console.log('session expired')
-    cookies.delete('session', { path: '/' })
+    await attachUserToRequestEvent(sessionId, event);
   }
 
   const response = await resolve(event)

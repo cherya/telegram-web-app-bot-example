@@ -1,95 +1,53 @@
-import { writable } from "svelte/store";
-import { TgUserStore } from "./stores/tg-user-store";
+class TgApp {
+  static initData = Telegram.WebApp.initData || '';
+  static initDataUnsafe = Telegram.WebApp.initDataUnsafe || {};
+  static MainButton = Telegram.WebApp.MainButton;
+  static HapticFeedback = Telegram.WebApp.HapticFeedback;
+  static BackButton = Telegram.WebApp.BackButton;
 
-export const AppState = writable({
-  valid: null,
-  data: {},
-});
-
-const baseURL = 'https://powerful-unbiased-gannet.ngrok-free.app'
-
-export const TgApp = {
-  initData: Telegram.WebApp.initData || '',
-  initDataUnsafe: Telegram.WebApp.initDataUnsafe || {},
-  MainButton: Telegram.WebApp.MainButton,
-  HapticFeedback: Telegram.WebApp.HapticFeedback,
-  BackButton: Telegram.WebApp.BackButton,
-
-  init(options) {
+  static init() {
     Telegram.WebApp.MainButton.setParams({
       text: 'Close',
       is_visible: true
     }).onClick(TgApp.close);
-  },
-  ready() {
+  }
+
+  static ready() {
     Telegram.WebApp.ready();
-  },
-  expand() {
+  }
+
+  static expand() {
     Telegram.WebApp.expand();
-  },
-  close() {
+  }
+
+  static close() {
     Telegram.WebApp.close();
-  },
-  sendData(data) {
+  }
+
+  static sendData(data) {
     Telegram.WebApp.sendData(data);
-  },
-  toggleMainButton(el) {
+  }
+
+  static toggleMainButton() {
     const mainButton = Telegram.WebApp.MainButton;
     if (mainButton.isVisible) {
       mainButton.hide();
     } else {
       mainButton.show();
     }
-  },
-  toggleBackButton(el) {
+  }
+
+  static toggleBackButton() {
     const backButton = Telegram.WebApp.BackButton;
     if (backButton.isVisible) {
       backButton.hide();
     } else {
       backButton.show();
     }
-  },
-  async checkInitData(initData) {
-    if (initData) {
-      AppState.set({
-        valid: null,
-        data: {},
-      });
-
-      // Fetch data from the API
-      let opts = {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          "ngrok-skip-browser-warning": "69420",
-        }
-      }
-
-      const response = await fetch(`${baseURL}/validate?${initData}`, opts);
-
-      // Parse the JSON response
-      const respData = await response.json();
-
-      if (response.ok) {
-        AppState.set({
-          valid: true,
-          data: respData,
-        });
-
-        return respData;
-      }
-
-      AppState.set({
-        valid: false,
-        data: {},
-      });
-
-      return {};
-    }
-
-    return {};
-  },
+  }
 }
+
+export { TgApp };
 
 function getInitData() {
   if (Telegram.WebApp.initData) {
