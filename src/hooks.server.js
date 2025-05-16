@@ -1,8 +1,34 @@
 import { sessionStore } from '$lib/server/session-store'
 
-// Attach authorization to each server request (role may have changed)
+// Attach authorization to each server request 
 async function attachUserToRequestEvent(sessionId, event) {
-  const session = await sessionStore.get(sessionId)
+  let session = await sessionStore.get(sessionId)
+
+  // refresh session
+  console.log(session.expirationDate - Date.now() + 60 * 1 * 1000);
+
+  const { cookies } = event
+
+  if (session.expirationDate && session.expirationDate < Date.now() + 30 * 1000) { // 1 minute 
+    const sessionId = `${crypto.randomUUID()}:${crypto.randomUUID()}`;
+
+    session = {
+      user: session.user,
+      valid: true,
+      expirationDate: Date.now() + 60 * 1 * 1000, // 1 minute
+    }
+
+    await sessionStore.set(sessionId, session);
+
+    cookies.set('session', sessionId, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+      partitioned: true,
+      expires: new Date(session.expirationDate),
+      path: '/'
+    });
+  }
 
   if (session) {
     event.locals.session = session

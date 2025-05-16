@@ -1,39 +1,42 @@
 import crypto from 'crypto';
+import { TELEGRAM_BOT_TOKEN } from '$env/static/private';
 
-import { TELEGRAM_BOT_TOKEN } from '$env/static/private'
+interface TelegramWebAppData {
+  user: string;
+  auth_date: number;
+}
+
+interface ValidationResult {
+  isValid: boolean;
+  data: TelegramWebAppData;
+}
 
 class ValidateTelegramWebAppData {
-  /**
-   * Creates ValidateTelegramWebAppData instance.
-   * @constructor
-   * @param {string} telegramBotToken - your Telegram bot's token
-   */
-  constructor(telegramBotToken) {
+  telegramBotToken: string;
+
+  constructor(telegramBotToken: string) {
     this.telegramBotToken = telegramBotToken;
   }
 
-  /**
-   * @param {string} initData - initData received from Telegram
-   * @param {number} secondsToExpire - number of seconds to expire from auth_date; enter 0 to ignore expiry check
-   * @returns {Object} - Returns an object with keys 'isValid' and 'data'.
-   * - Value of 'isValid' will be true if data is valid; false if data is invalid/has expired.
-   * - Value of 'data' contains the parsed initData in object
-   */
-  validateData(initData, secondsToExpire) {
+  validateData(initData: string, secondsToExpire: number): ValidationResult {
     const params = new URLSearchParams(initData);
-    const data = {};
+    const data = {} as TelegramWebAppData;
     let hash = '';
+
     for (const [key, value] of params.entries()) {
       key === 'hash' ? hash = value : data[key] = value;
     }
+
     const dataCheckString = Object.keys(data)
       .sort()
       .map(key => `${key}=${data[key]}`)
       .join('\n');
+
     const secretKey = crypto.createHmac('sha256', 'WebAppData').update(this.telegramBotToken).digest();
     const hmac = crypto.createHmac('sha256', secretKey).update(dataCheckString).digest('hex');
     const currentTime = Date.now() / 1000;
-    const currentAndAuthTimeDiff = currentTime - data.auth_date;
+    const authDate = Number(data.auth_date);
+    const currentAndAuthTimeDiff = currentTime - authDate;
 
     if (secondsToExpire === 0) {
       return {

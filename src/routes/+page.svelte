@@ -2,11 +2,17 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 
 <script>
+  import {
+    Avatar,
+    Accordion,
+    AccordionItem,
+    ProgressBar,
+  } from "@skeletonlabs/skeleton";
+
   import { TgApp, CheckInitData } from "$lib/telegram";
-  import { Avatar } from "@skeletonlabs/skeleton";
+  import { GetCharacter } from "$lib/character/character";
   import { TgUserStore } from "$lib/stores/tg-user-store";
   import { CharStore } from "$lib/stores/character-store";
-  import { Accordion, AccordionItem } from "@skeletonlabs/skeleton";
 
   const userStore = TgUserStore();
   const charStore = CharStore();
@@ -19,6 +25,14 @@
     let resp = await CheckInitData();
 
     userStore.set(resp);
+  }
+
+  async function syncCharacter() {
+    charStore.set({ ready: false });
+
+    let resp = await GetCharacter();
+
+    charStore.set({ ready: true, ...resp });
   }
 </script>
 
@@ -93,7 +107,14 @@
         {$charStore.currencies.find((c) => c.id === "gold")?.amount ?? 0}
       </div>
     </div>
+  {:else}
+    <ProgressBar />
   {/if}
+  <button
+    on:click={syncCharacter}
+    type="button"
+    class="btn variant-filled rounded-md">Sync Character</button
+  >
 
   <Accordion>
     <AccordionItem>

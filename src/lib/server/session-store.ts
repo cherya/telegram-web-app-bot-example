@@ -6,20 +6,22 @@ const redis = new Redis({
   token: KV_REST_API_TOKEN || ""
 });
 
-
 // Initialize Redis
 class SessionStore {
+  client: Redis;
+
   constructor() {
-    this.client = redis
+    this.client = redis;
   }
 
-  async set(sessionId, data) {
+  async set(sessionId: string, data: unknown): Promise<void> {
     await this.client.set(sessionId, data, { ex: 60 * 5 });
   }
 
-  async get(sessionId) {
+  async get<T = unknown>(sessionId: string): Promise<T | null> {
     return await this.client.get(sessionId);
   }
 }
 
 export const sessionStore = new SessionStore();
+
