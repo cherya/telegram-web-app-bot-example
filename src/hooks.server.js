@@ -1,21 +1,21 @@
 import { sessionStore } from '$lib/server/session-store'
+import { SESSION_TTL_SECONDS } from '$env/static/private';
+
+const ttl = parseInt(SESSION_TTL_SECONDS) || 60 * 5; // Default to 5 minutes if not set
 
 // Attach authorization to each server request 
 async function attachUserToRequestEvent(sessionId, event) {
   let session = await sessionStore.get(sessionId)
 
-  // refresh session
-  console.log(session.expirationDate - Date.now() + 60 * 1 * 1000);
-
   const { cookies } = event
 
-  if (session.expirationDate && session.expirationDate < Date.now() + 30 * 1000) { // 1 minute 
+  if (session.expirationDate && session.expirationDate < Date.now() + (ttl * 1000 / 2)) { // halfway through the TTL
     const sessionId = `${crypto.randomUUID()}:${crypto.randomUUID()}`;
 
     session = {
       user: session.user,
       valid: true,
-      expirationDate: Date.now() + 60 * 1 * 1000, // 1 minute
+      expirationDate: Date.now() + ttl * 1000,
     }
 
     await sessionStore.set(sessionId, session);
