@@ -9,10 +9,11 @@
     ProgressBar,
   } from "@skeletonlabs/skeleton";
 
-  import { TgApp, CheckInitData } from "$lib/telegram";
+  import { TgApp } from "$lib/telegram";
   import { GetCharacter } from "$lib/character/character";
-  import { TgUserStore } from "$lib/stores/tg-user-store";
+  import { TgUserStore, initTgUser } from "$lib/stores/tg-user-store";
   import { CharStore } from "$lib/stores/character-store";
+  import UserHeader from "$lib/components/UserHeader.svelte";
 
   const userStore = TgUserStore();
   const charStore = CharStore();
@@ -20,11 +21,7 @@
   let sendData = "example send data";
 
   async function reValidateData() {
-    userStore.set({ valid: null, user: {} });
-
-    let resp = await CheckInitData();
-
-    userStore.set(resp);
+    initTgUser();
   }
 
   async function syncCharacter() {
@@ -37,55 +34,11 @@
 </script>
 
 <div class="container mx-auto p-6 space-y-4">
-  {#if $userStore.valid === false}
-    <aside class="alert variant-filled-error rounded-md">
-      <!-- Icon -->
-      <div class="fa-solid fa-triangle-exclamation text-4xl" />
-      <!-- Message -->
-      <div class="alert-message">
-        <h3 class="h3">Invalid initData</h3>
-        <p>
-          Can't validate the data. Ensure that page is opened from Telegram app
-          and try again.
-        </p>
-      </div>
-    </aside>
-  {/if}
-
-  <div class="flex">
-    <div class="relative inline-block flex-none">
-      {#if $userStore.valid === true}
-        <span
-          class="badge-icon variant-filled-success absolute -bottom-0 -left-0 z-10"
-        ></span>
-      {:else if $userStore.valid === false}
-        <span
-          class="badge-icon variant-filled-error absolute -bottom-0 -left-0 z-10"
-        ></span>
-      {:else if $userStore.valid === null}
-        <span
-          class="badge-icon variant-filled-warning animate-pulse absolute -bottom-0 -left-0 z-10"
-        ></span>
-      {/if}
-
-      <Avatar src={$userStore.user.photo_url} />
-    </div>
-    {#if $userStore.valid === true}
-      <div class="flex-1 ml-8">
-        <h1 class="text-2xl font-bold">
-          {$userStore.user.first_name}
-          "{$userStore.user.username}"
-          {$userStore.user.last_name}
-        </h1>
-        <p class="text-gray-500">@{$userStore.user.username}</p>
-      </div>
-    {:else}
-      <div class="flex-1 ml-8">
-        <div class="placeholder animate-pulse rounded-md mt-2"></div>
-        <div class="placeholder animate-pulse rounded-md mt-4"></div>
-      </div>
-    {/if}
-  </div>
+  <UserHeader
+    user={$userStore.data?.user}
+    loading={$userStore.loading}
+    error={$userStore.error}
+  />
 
   {#if $charStore.ready === true}
     <div class="sk-card sk-p-4 sk-mb-4">

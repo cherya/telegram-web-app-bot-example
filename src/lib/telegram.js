@@ -58,7 +58,7 @@ function getInitData() {
 }
 
 export async function CheckInitData() {
-  let initData = getInitData();
+  const initData = getInitData();
 
   const response = await fetch(`/api/validate?${initData}`, {
     method: 'GET',
@@ -67,7 +67,11 @@ export async function CheckInitData() {
     }
   });
 
-  let respData = await response.json();
+  if (!response.ok) {
+    const respData = await response.json();
+    throw new Error(`Validation failed: ${respData.message}`)
+  }
 
+  const respData = await response.json();
   return respData;
 }

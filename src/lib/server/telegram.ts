@@ -9,6 +9,7 @@ interface TelegramWebAppData {
 interface ValidationResult {
   isValid: boolean;
   data: TelegramWebAppData;
+  error?: string;
 }
 
 class ValidateTelegramWebAppData {
@@ -38,16 +39,27 @@ class ValidateTelegramWebAppData {
     const authDate = Number(data.auth_date);
     const currentAndAuthTimeDiff = currentTime - authDate;
 
-    if (secondsToExpire === 0) {
+    console.log('time diff', currentAndAuthTimeDiff);
+
+    if (hmac !== hash) {
       return {
-        isValid: hmac === hash,
-        data
-      };
-    } else {
+        isValid: false,
+        error: 'Telegram data hash mismatch',
+        data,
+      }
+    }
+
+    if (secondsToExpire !== 0 && currentAndAuthTimeDiff > secondsToExpire) {
       return {
-        isValid: currentAndAuthTimeDiff < secondsToExpire && hmac === hash,
-        data
-      };
+        isValid: false,
+        error: 'Telegram data expired',
+        data,
+      }
+    }
+
+    return {
+      isValid: true,
+      data,
     }
   }
 }

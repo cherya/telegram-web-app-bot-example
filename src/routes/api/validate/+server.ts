@@ -1,49 +1,30 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import type { Session, User } from '$types/user';
 
-import { SESSION_TTL_SECONDS } from '$env/static/private';
+import { newCookieSession } from '$lib/session';
 
-import { json } from '@sveltejs/kit';
+import { json, error } from '@sveltejs/kit';
 import { Validator } from '$lib/server/telegram';
-import { sessionStore } from '$lib/server/session-store';
-import crypto from 'crypto';
-
-
-const ttl = parseInt(SESSION_TTL_SECONDS) || 60 * 5; // Default to 5 minutes if not set
 
 export const GET: RequestHandler = async ({ url, cookies, locals }) => {
+  // if session exists, return it
   if (locals.session) {
     return json(locals.session);
   }
 
-  // new session
-  const { isValid, data } = Validator.validateData(url.searchParams.toString(), 60 * 60); // 1 hour
+  // if not – create new session
+  const validationResult = Validator.validateData(url.searchParams.toString(), 60 * 60 * 12); // 1 hour
 
-  const session: Session = {
-    valid: isValid,
-    user: {} as User,
-  };
+  let session: Session;
 
-  if (isValid) {
-    const sessionId = `${crypto.randomUUID()}:${crypto.randomUUID()}`;
-    const user: User = JSON.parse(data.user);
+  if (validationResult.isValid) {
+    const user: User = JSON.parse(validationResult.data.user);
 
-    session.user = user;
-    session.expirationDate = Date.now() + ttl * 1000;
-
-    await sessionStore.set(sessionId, session);
-
-    cookies.set('session', sessionId, {
-      httpOnly: true,
-      sameSite: 'none',
-      secure: true,
-      partitioned: true,
-      expires: new Date(session.expirationDate),
-      path: '/'
-    });
+    session = await newCookieSession(user, cookies);
+  } else {
+    return error(401, validationResult.error || 'Telegram validation error');
   }
 
   return json(session);
 };
-
 
