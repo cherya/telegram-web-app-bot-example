@@ -6,10 +6,8 @@
   export let data; // see src/routes/+layout.server.js
 
   const userStore = UserStore(data.user);
-  const charStore = CharStore(data.character);
 
   $userStore = data.user;
-  $charStore = data.character;
 
   const charactersList = data.charactersList;
 
@@ -18,7 +16,6 @@
   onMount(async () => {
     if (!data.user.valid) {
       await initUser(userStore);
-      await initCharacter(charStore, data.user.data.id);
     }
 
     // charSyncInterval = setInterval(async () => {

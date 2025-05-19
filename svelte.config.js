@@ -15,7 +15,7 @@ const config = {
     alias: {
       "$types/*": "src/types/*",
       "$constants": "src/constants/constants"
-    }
+    },
   },
   preprocess: vitePreprocess(),
 };

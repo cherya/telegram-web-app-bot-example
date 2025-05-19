@@ -23,3 +23,5 @@ export const load = async ({ locals, fetch, params }) => {
     character: wrapAsyncState(character, false),
   }
 }
+
+export const prerender = false;
