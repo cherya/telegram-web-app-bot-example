@@ -1,7 +1,7 @@
 <script>
   import { UserStore, initUser } from "$lib/stores/tg-user-store";
-  import { CharStore, initCharacter } from "$lib/stores/character-store";
   import { onMount } from "svelte";
+  import { TgApp } from "$lib/telegram";
 
   export let data; // see src/routes/+layout.server.js
 
@@ -9,14 +9,15 @@
 
   $userStore = data.user;
 
-  const charactersList = data.charactersList;
-
   // let charSyncInterval;
 
   onMount(async () => {
     if (!data.user.valid) {
-      await initUser(userStore);
+      await initUser(userStore, Telegram.WebApp.initData);
     }
+
+    TgApp.init();
+    TgApp.ready();
 
     // charSyncInterval = setInterval(async () => {
     //   if ($userStore.user) {
@@ -35,4 +36,4 @@
   // });
 </script>
 
-<slot chars={charactersList}></slot>
+<slot></slot>

@@ -5,5 +5,9 @@ declare global {
     interface Locals {
       session?: Session;
     }
+
+    interface Window {
+      Telegram?: any
+    }
   }
 }

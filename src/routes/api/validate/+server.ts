@@ -16,8 +16,6 @@ export const GET: RequestHandler = async ({ url, cookies, locals }) => {
     return json(locals.session);
   }
 
-  console.log('Validating Telegram session...');
-
   // if not – create new session
   const validationResult = Validator.validateData(url.searchParams.toString(), 60 * 60 * 12); // 12 hours
 

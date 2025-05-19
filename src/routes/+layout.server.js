@@ -1,4 +1,4 @@
-import { GetCharacter, GetCharacterById, GetCharacters } from '$lib/character/api'
+import { GetCharacters } from '$lib/character/api'
 
 const wrapAsyncState = (data, loading = false, error = null) => ({
   data,

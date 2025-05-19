@@ -39,8 +39,6 @@ class ValidateTelegramWebAppData {
     const authDate = Number(data.auth_date);
     const currentAndAuthTimeDiff = currentTime - authDate;
 
-    console.log('time diff', currentAndAuthTimeDiff);
-
     if (hmac !== hash) {
       return {
         valid: false,

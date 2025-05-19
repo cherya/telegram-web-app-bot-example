@@ -1,5 +1,5 @@
 import { useAsyncStore } from '$lib/stores/use-async-store'
-import { CheckInitData, TgApp } from '$lib/telegram'
+import { CheckInitData } from '$lib/user/api'
 import type { User } from '$types/user'
 
 const name = 'tg-user'
@@ -21,7 +21,7 @@ export const UserStore = (initialData?: UserStoreState) => useAsyncStore(name, i
 export const initUser = async (store: {
   get: () => UserStoreState
   set: (state: UserStoreState) => void
-}) => {
+}, initialData: string) => {
   const current = store.get()
 
   if (current.data?.valid) {
@@ -32,11 +32,8 @@ export const initUser = async (store: {
   store.set({ loading: true, error: null, data: {} as UserData })
 
   try {
-    const resp = await CheckInitData()
+    const resp = await CheckInitData(initialData)
     store.set({ loading: false, error: null, data: resp })
-
-    TgApp.init()
-    TgApp.ready()
   } catch (err) {
     store.set({ loading: false, error: String(err), data: {} as UserData })
   }
