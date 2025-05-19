@@ -7,7 +7,7 @@ interface TelegramWebAppData {
 }
 
 interface ValidationResult {
-  isValid: boolean;
+  valid: boolean;
   data: TelegramWebAppData;
   error?: string;
 }
@@ -43,7 +43,7 @@ class ValidateTelegramWebAppData {
 
     if (hmac !== hash) {
       return {
-        isValid: false,
+        valid: false,
         error: 'Telegram data hash mismatch',
         data,
       }
@@ -51,14 +51,14 @@ class ValidateTelegramWebAppData {
 
     if (secondsToExpire !== 0 && currentAndAuthTimeDiff > secondsToExpire) {
       return {
-        isValid: false,
+        valid: false,
         error: 'Telegram data expired',
         data,
       }
     }
 
     return {
-      isValid: true,
+      valid: true,
       data,
     }
   }

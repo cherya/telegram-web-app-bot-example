@@ -1,37 +1,36 @@
 <script>
-  import { TgUserStore, initTgUser } from "$lib/stores/tg-user-store";
-  import { CharStore } from "$lib/stores/character-store";
-  import { onMount, onDestroy } from "svelte";
-  import { GetCharacter } from "$lib/character/character";
+  import { UserStore, initUser } from "$lib/stores/tg-user-store";
+  import { CharStore, initCharacter } from "$lib/stores/character-store";
+  import { onMount } from "svelte";
 
   export let data; // see src/routes/+layout.server.js
 
-  const userStore = TgUserStore(data);
-  const charStore = CharStore();
+  const userStore = UserStore(data.user);
+  const charStore = CharStore(data.character);
 
-  $userStore = data;
+  $userStore = data.user;
+  $charStore = data.character;
+
+  const charactersList = data.charactersList;
+
   // let charSyncInterval;
 
   onMount(async () => {
-    if (!data.valid) {
-      initTgUser(userStore);
+    if (!data.user.valid) {
+      await initUser(userStore);
+      await initCharacter(charStore, data.user.data.id);
     }
 
-    // if ($userStore.user) {
-    //   const char = await GetCharacter($userStore.user.id);
-    //   charStore.set({ ...char, ready: true });
-    // }
-    //
     // charSyncInterval = setInterval(async () => {
     //   if ($userStore.user) {
     //     const char = await GetCharacter($userStore.user.id);
     //     charStore.set({ ...char, ready: true });
     //   }
     // }, 10000);
-
-    // return () => {
-    //  clearInterval(charSyncInterval);
-    // };
+    //
+    return () => {
+      // clearInterval(charSyncInterval);
+    };
   });
 
   // onDestroy(() => {
@@ -39,4 +38,4 @@
   // });
 </script>
 
-<slot></slot>
+<slot chars={charactersList}></slot>

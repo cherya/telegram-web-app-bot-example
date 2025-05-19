@@ -1,4 +1,5 @@
 import { KV_REST_API_URL, KV_REST_API_TOKEN } from "$env/static/private";
+import type { CharacterData } from "$lib/character/types";
 import { Redis } from '@upstash/redis';
 
 const redis = new Redis({
@@ -6,13 +7,8 @@ const redis = new Redis({
   token: KV_REST_API_TOKEN || ""
 });
 
-function makeId(userId: string): string {
-  return `character:${userId}`;
-}
-
-export interface CharacterData {
-  // Define the shape of your character data here
-  [key: string]: any;
+function makeId(userId: string, charId: string): string {
+  return `character:${userId}:${charId}`;
 }
 
 class CharacterStore {
@@ -23,12 +19,27 @@ class CharacterStore {
   }
 
   async set(userId: string, data: CharacterData): Promise<void> {
-    await this.client.set(makeId(userId), data);
+    await this.client.set(makeId(userId, data.id), data);
   }
 
-  async get(userId: string): Promise<CharacterData | null> {
-    return await this.client.get(makeId(userId));
+  async get(userId: string, charId: string): Promise<CharacterData | null> {
+    return await this.client.get(makeId(userId, charId));
   }
+
+  async list(userId: string): Promise<CharacterData[]> {
+    const keys = await this.client.keys(`character:${userId}:*`);
+
+    if (!keys.length) return [];
+
+    const charsResp = await this.client.mget(keys);
+
+    const chars: CharacterData[] = charsResp
+      .filter((char): char is CharacterData => char !== null)
+      .map((char) => char as CharacterData);
+
+    return chars;
+  }
+
 }
 
 export const characterStore = new CharacterStore();

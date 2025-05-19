@@ -8,6 +8,8 @@ export class Character {
   equipped: Record<Slot, Item | null>
   currencies: Currency[]
 
+  lastSyncAt: number
+
   constructor(data: CharacterData) {
     this.id = data.id
     this.name = data.name
@@ -15,9 +17,9 @@ export class Character {
     this.inventory = data.inventory
     this.equipped = data.equipped
     this.currencies = data.currencies
+    this.lastSyncAt = data.lastSyncAt
   }
 
-  // helpers
   getSkill(id: string) {
     return this.skills.find(s => s.id === id)
   }
@@ -47,7 +49,7 @@ export class Character {
   }
 }
 
-export function GenerateRandomCharacter(level: number): Character {
+export function GenerateRandomCharacter(level: number): CharacterData {
   const id = `char_${Math.random().toString(36).slice(2, 10)}`;
   const name = `Adventurer${Math.floor(Math.random() * 1000)}`;
 
@@ -73,26 +75,14 @@ export function GenerateRandomCharacter(level: number): Character {
     { id: 'gold', name: 'Gold', amount: 100 * level }
   ];
 
-  return new Character({
+  return {
     id,
     name,
     skills,
     inventory,
     equipped,
-    currencies
-  });
+    currencies,
+    lastSyncAt: Date.now(),
+  };
 }
 
-export async function GetCharacter(id: string): Promise<Character | null> {
-  const resp = await fetch(`/api/character`, {
-    method: 'GET',
-    headers: {
-      'content-type': 'application/json',
-      'accept': 'application/json'
-    }
-  });
-
-  let character = await resp.json();
-
-  return character ? new Character(character) : null;
-}

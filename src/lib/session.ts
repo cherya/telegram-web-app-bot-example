@@ -8,7 +8,6 @@ export async function newCookieSession(user: User, cookies: Cookies): Promise<Se
 
   const session = {
     user: user,
-    valid: true,
     expirationDate: Date.now() + sessionTTL,
   }
 

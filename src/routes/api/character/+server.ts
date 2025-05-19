@@ -7,12 +7,14 @@ export async function GET({ locals }) {
     return error(401, 'Unauthorized');
   }
 
-  let character = await characterStore.get(locals.session.user.id);
+  const characters = await characterStore.list(locals.session.user.id);
 
-  if (!character) {
-    character = GenerateRandomCharacter(1);
-    await characterStore.set(locals.session.user.id, character);
+  if (!characters.length) {
+    let char = GenerateRandomCharacter(1);
+    await characterStore.set(locals.session.user.id, char);
+
+    return json([char]);
   }
 
-  return json(character);
+  return json(characters);
 };

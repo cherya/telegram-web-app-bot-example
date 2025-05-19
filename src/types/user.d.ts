@@ -1,9 +1,7 @@
-
 /**
  * Represents a user session.
  */
 export interface Session {
-  valid: boolean;
   user: User;
   expirationDate?: number;
 }

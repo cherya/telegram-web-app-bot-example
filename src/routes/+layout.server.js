@@ -1,9 +1,25 @@
-export const load = ({ locals }) => {
+import { GetCharacter, GetCharacterById, GetCharacters } from '$lib/character/api'
+
+const wrapAsyncState = (data, loading = false, error = null) => ({
+  data,
+  loading,
+  error
+})
+
+export const load = async ({ locals, fetch }) => {
   const { session } = locals // locals.session set by hooks.server.ts/handle(), undefined if not logged in
 
   if (!session) {
-    return { data: { user: {}, valid: null }, loading: true }
+    return {
+      user: wrapAsyncState({ user: {}, valid: null }, true),
+      charactersList: [],
+    }
   }
 
-  return { data: { user: session.user, valid: session.valid }, loading: false }
+  const charactersList = await GetCharacters(fetch, true)
+
+  return {
+    user: wrapAsyncState({ user: session.user, valid: true }, false),
+    charactersList: charactersList,
+  }
 }
