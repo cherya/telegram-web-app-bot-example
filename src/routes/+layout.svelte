@@ -2,12 +2,18 @@
   import { UserStore, initUser } from "$lib/stores/tg-user-store";
   import { onMount } from "svelte";
   import { TgApp } from "$lib/telegram";
+  import { beforeNavigate, afterNavigate } from "$app/navigation";
+  import { writable } from "svelte/store";
 
   export let data; // see src/routes/+layout.server.js
 
   const userStore = UserStore(data.user);
 
   $userStore = data.user;
+
+  const nav = writable(false);
+  beforeNavigate(() => ($nav = true));
+  afterNavigate(() => ($nav = false));
 
   // let charSyncInterval;
 
@@ -18,6 +24,12 @@
 
     TgApp.init();
     TgApp.ready();
+
+    if (window.history.length > 1) {
+      TgApp.BackButton?.show();
+    } else {
+      TgApp.BackButton?.hide();
+    }
 
     // charSyncInterval = setInterval(async () => {
     //   if ($userStore.user) {
@@ -36,4 +48,12 @@
   // });
 </script>
 
-<slot></slot>
+<div>
+  {#if $nav}
+    <div class="fixed top-0 left-0 w-full z-50">
+      <div class="loader h-1 bg-blue-500 animate-pulse"></div>
+    </div>
+  {/if}
+
+  <slot></slot>
+</div>
