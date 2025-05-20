@@ -5,6 +5,8 @@
   export let user: User | null = null;
   export let loading: boolean = false;
   export let error: string | null = null;
+
+  console.log("UserHeader", { user, loading, error });
 </script>
 
 {#if error}
@@ -31,7 +33,8 @@
       <Avatar src={user?.photo_url} />
     {/if}
   </div>
-  {#if user}
+
+  {#if user && !loading}
     <div class="flex-1 ml-8">
       <h1 class="text-2xl font-bold">
         {user.first_name}

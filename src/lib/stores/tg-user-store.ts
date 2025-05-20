@@ -1,13 +1,15 @@
 import { useAsyncStore } from '$lib/stores/use-async-store'
 import { CheckInitData } from '$lib/user/api'
+import { GetCharacters } from '$lib/character/api'
 import type { User } from '$types/user'
+import type { CharacterData } from '$lib/character/types'
 
 const name = 'tg-user'
 
 export interface UserData {
   valid?: boolean
   user: User
-  characters?: string[]
+  characters?: CharacterData[]
 }
 
 export interface UserStoreState {
@@ -32,8 +34,19 @@ export const initUser = async (store: {
   store.set({ loading: true, error: null, data: {} as UserData })
 
   try {
-    const resp = await CheckInitData(initialData)
-    store.set({ loading: false, error: null, data: resp })
+    const user = await CheckInitData(initialData)
+    const characters = await GetCharacters()
+
+    console.log('user', user)
+    console.log('characters', characters)
+
+    store.set({
+      loading: false, error: null, data: {
+        user: user.user,
+        valid: user.valid,
+        characters: characters
+      }
+    })
   } catch (err) {
     store.set({ loading: false, error: String(err), data: {} as UserData })
   }

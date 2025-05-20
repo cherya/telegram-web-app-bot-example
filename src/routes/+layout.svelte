@@ -1,8 +1,9 @@
 <script>
   import { UserStore, initUser } from "$lib/stores/tg-user-store";
+  import { navStack } from "$lib/stores/nav-stack";
   import { onMount } from "svelte";
   import { TgApp } from "$lib/telegram";
-  import { beforeNavigate, afterNavigate } from "$app/navigation";
+  import { beforeNavigate, afterNavigate, goto } from "$app/navigation";
   import { writable } from "svelte/store";
 
   export let data; // see src/routes/+layout.server.js
@@ -11,9 +12,23 @@
 
   $userStore = data.user;
 
+  function handleBack() {
+    navStack.pop(); // Remove current route
+    const previousRoute = navStack.getCurrent();
+    if (previousRoute) {
+      goto(previousRoute);
+    } else {
+      // Fallback behavior, e.g., navigate to home
+      goto("/");
+    }
+  }
+
   const nav = writable(false);
   beforeNavigate(() => ($nav = true));
-  afterNavigate(() => ($nav = false));
+  afterNavigate(({ to }) => {
+    $nav = false;
+    navStack.push(to.url.pathname);
+  });
 
   // let charSyncInterval;
 
@@ -25,11 +40,17 @@
     TgApp.init();
     TgApp.ready();
 
-    if (window.history.length > 1) {
-      TgApp.BackButton?.show();
-    } else {
-      TgApp.BackButton?.hide();
-    }
+    navStack.subscribe((stack) => {
+      if (stack.length > 1) {
+        TgApp.BackButton.show();
+      } else {
+        TgApp.BackButton.hide();
+      }
+    });
+
+    TgApp.BackButton.onClick(() => {
+      handleBack();
+    });
 
     // charSyncInterval = setInterval(async () => {
     //   if ($userStore.user) {
