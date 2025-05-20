@@ -28,6 +28,7 @@ class TgApp {
   static init() {
     console.log('Telegram WebApp initialized')
     console.log('mainButton:', this.MainButton)
+    console.log('close', this.close, this.WebApp.close)
 
     this.MainButton?.setParams({
       text: 'Close',
