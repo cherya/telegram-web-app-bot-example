@@ -37,9 +37,6 @@ export const initUser = async (store: {
     const user = await CheckInitData(initialData)
     const characters = await GetCharacters()
 
-    console.log('user', user)
-    console.log('characters', characters)
-
     store.set({
       loading: false, error: null, data: {
         user: user.user,

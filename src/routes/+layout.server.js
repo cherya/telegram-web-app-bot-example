@@ -12,14 +12,16 @@ export const load = async ({ locals, fetch }) => {
   if (!session) {
     return {
       user: wrapAsyncState({ user: {}, valid: null }, true),
-      charactersList: [],
     }
   }
 
   const charactersList = await GetCharacters(fetch, true)
 
   return {
-    user: wrapAsyncState({ user: session.user, valid: true }, false),
-    charactersList: charactersList,
+    user: wrapAsyncState({
+      user: session.user,
+      valid: true,
+      characters: charactersList,
+    }, false),
   }
 }
