@@ -26,10 +26,26 @@ class TgApp {
   }
 
   static init() {
+    console.log('Telegram WebApp initialized')
+    console.log('mainButton:', this.MainButton)
+
     this.MainButton?.setParams({
       text: 'Close',
       is_visible: true
     })?.onClick(this.close)
+  }
+
+  static setMainButtonAction(fn) {
+    if (this.mainButtonCallback) {
+      this.MainButton?.offClick(this.mainButtonCallback)
+    }
+
+    this.mainButtonCallback = fn;
+    this.MainButton?.onClick(this.mainButtonCallback)
+  }
+
+  static setMainButtonParams(params) {
+    this.MainButton?.setParams(params)
   }
 
   static ready() {
@@ -41,6 +57,8 @@ class TgApp {
   }
 
   static close() {
+    console.log('Telegram WebApp close')
+
     this.WebApp?.close()
   }
 
