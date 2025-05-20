@@ -57,7 +57,7 @@ class TgApp {
   }
 
   static close() {
-    console.log('Telegram WebApp close')
+    console.log('Telegram WebApp close', this.WebApp.close)
 
     this.WebApp?.close()
   }
