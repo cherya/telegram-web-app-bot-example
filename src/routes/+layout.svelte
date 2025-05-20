@@ -41,6 +41,7 @@
     TgApp.ready();
 
     navStack.subscribe((stack) => {
+      console.log("navStack", stack);
       if (stack.length > 1) {
         TgApp.BackButton.show();
       } else {
