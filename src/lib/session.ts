@@ -1,4 +1,4 @@
-import type { User, Session } from '$types/user';
+import type { User, Session } from '$lib/user/user';
 import { sessionStore } from '$lib/server/session-store';
 import type { Cookies } from '@sveltejs/kit';
 import { sessionTTL } from '$constants';

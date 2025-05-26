@@ -1,18 +1,22 @@
-import type { CharacterData, Skill, Item, Slot, Currency } from './types'
+import type { CharacterData, Skill, Item, Slot, Currency, BaseStat } from './types'
 
 export class Character {
   id: string
   name: string
   skills: Skill[]
+  stats: BaseStat[]
   inventory: Item[]
   equipped: Record<Slot, Item | null>
   currencies: Currency[]
 
   lastSyncAt: number
 
+  currentActivity: string | null = null
+
   constructor(data: CharacterData) {
     this.id = data.id
     this.name = data.name
+    this.stats = data.stats
     this.skills = data.skills
     this.inventory = data.inventory
     this.equipped = data.equipped
@@ -20,8 +24,8 @@ export class Character {
     this.lastSyncAt = data.lastSyncAt
   }
 
-  getSkill(id: string) {
-    return this.skills.find(s => s.id === id)
+  getSkill(name: string) {
+    return this.skills.find(s => s.name === name)
   }
 
   getCurrency(id: string) {
@@ -54,9 +58,7 @@ export function GenerateRandomCharacter(level: number): CharacterData {
   const name = `Adventurer${Math.floor(Math.random() * 1000)}`;
 
   const skillNames = [
-    'Swordsmanship', 'Archery', 'Magic', 'Stealth', 'Alchemy',
-    'Banana Peeling', 'Sock Sorting', 'Extreme Napping', 'Bubble Popping', 'Paperclip Bending',
-    'Toothpick Balancing', 'Invisible Ink Writing', 'Left Shoe Tying', 'Ceiling Staring', 'Pencil Dropping'
+    'Mining', 'Fishing', 'Woodcutting', 'Smithing', 'Herbalism',
   ];
 
   const skillCount = 5;
@@ -68,6 +70,14 @@ export function GenerateRandomCharacter(level: number): CharacterData {
     xp: 0,
   }));
 
+  const stats: BaseStat[] = [
+    { name: 'Strength', level: 1 },
+    { name: 'Dexterity', level: 1 },
+    { name: 'Intelligence', level: 1 },
+    { name: 'Constitution', level: 1 },
+    { name: 'Wisdom', level: 1 },
+  ]
+
   const inventory: Item[] = [];
   const equipped: Record<Slot, Item | null> = {} as Record<Slot, Item | null>;
 
@@ -78,6 +88,7 @@ export function GenerateRandomCharacter(level: number): CharacterData {
   return {
     id,
     name,
+    stats,
     skills,
     inventory,
     equipped,

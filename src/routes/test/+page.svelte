@@ -123,11 +123,9 @@
   <hr class="!border-t-4" />
 
   <h6 class="h6">Validated user data:</h6>
-  {#if $userStore.valid === true}
+  {#if $userStore.user}
     <pre class="pre rounded-md">{JSON.stringify($userStore.user, null, 2)}</pre>
-  {:else if $userStore.valid === false}
-    <div class="text-center">validation failded</div>
-  {:else if $userStore.valid === null}
+  {:else}
     <div class="placeholder animate-pulse rounded-md" />
   {/if}
 

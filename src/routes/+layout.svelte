@@ -1,10 +1,12 @@
 <script>
   import { UserStore, initUser } from "$lib/stores/tg-user-store";
-  import { navStack } from "$lib/stores/nav-stack";
+  import { NavStack } from "$lib/stores/nav-stack";
   import { onMount } from "svelte";
   import { TgApp } from "$lib/telegram";
   import { beforeNavigate, afterNavigate, goto } from "$app/navigation";
   import { writable } from "svelte/store";
+  import { ProgressBar } from "@skeletonlabs/skeleton";
+  import UserHeader from "$lib/components/UserHeader.svelte";
 
   export let data; // see src/routes/+layout.server.js
 
@@ -13,8 +15,8 @@
   $userStore = data.user;
 
   function handleBack() {
-    navStack.pop(); // Remove current route
-    const previousRoute = navStack.getCurrent();
+    NavStack.pop(); // Remove current route
+    const previousRoute = NavStack.getCurrent();
     if (previousRoute) {
       goto(previousRoute);
     } else {
@@ -23,25 +25,24 @@
     }
   }
 
-  const nav = writable(false);
-  beforeNavigate(() => ($nav = true));
+  const navigating = writable(false);
+  beforeNavigate(() => ($navigating = true));
   afterNavigate(({ to }) => {
-    $nav = false;
-    navStack.push(to.url.pathname);
+    $navigating = false;
+    NavStack.push(to.url.pathname);
   });
 
   // let charSyncInterval;
 
   onMount(async () => {
-    if (!data.user.valid) {
+    if (!$userStore.data.user) {
       await initUser(userStore, Telegram.WebApp.initData);
     }
 
     TgApp.init();
     TgApp.ready();
 
-    navStack.subscribe((stack) => {
-      console.log("navStack", stack);
+    NavStack.subscribe((stack) => {
       if (stack.length > 1) {
         TgApp.BackButton.show();
       } else {
@@ -52,30 +53,46 @@
     TgApp.BackButton.onClick(() => {
       handleBack();
     });
-
-    // charSyncInterval = setInterval(async () => {
-    //   if ($userStore.user) {
-    //     const char = await GetCharacter($userStore.user.id);
-    //     charStore.set({ ...char, ready: true });
-    //   }
-    // }, 10000);
-    //
-    return () => {
-      // clearInterval(charSyncInterval);
-    };
   });
-
-  // onDestroy(() => {
-  //   clearInterval(charSyncInterval);
-  // });
 </script>
 
-<div>
-  {#if $nav}
-    <div class="fixed top-0 left-0 w-full z-50">
-      <div class="loader h-1 bg-blue-500 animate-pulse"></div>
-    </div>
-  {/if}
+<!-- loading indicator -->
+{#if $navigating}
+  <div class="absolute top-0 left-0 w-full z-50">
+    <ProgressBar
+      animIndeterminate="anim-progress-bar"
+      meter="bg-secondary-500"
+      track="bg-secondary-500/30"
+      height="h-1"
+    />
+  </div>
+{/if}
 
-  <slot></slot>
+<div class="container mx-auto p-6 space-y-4">
+  <UserHeader
+    user={$userStore.data?.user}
+    loading={$userStore.loading}
+    error={$userStore.error}
+  />
 </div>
+
+<slot></slot>
+
+<style>
+  :global(.anim-progress-bar) {
+    transform-origin: 0% 50%;
+    animation: anim-progress-bar 2s infinite linear;
+  }
+
+  @keyframes anim-progress-bar {
+    0% {
+      transform: translateX(50%) scaleX(0.5);
+    }
+    50% {
+      transform: translateX(0) scaleX(0.5);
+    }
+    100% {
+      transform: translateX(50%) scaleX(0.5);
+    }
+  }
+</style>

@@ -13,7 +13,6 @@ const config = {
     }),
     paths: {},
     alias: {
-      "$types/*": "src/types/*",
       "$constants": "src/constants/constants"
     },
   },

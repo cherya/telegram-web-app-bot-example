@@ -1,16 +1,13 @@
 import type { RequestHandler } from '@sveltejs/kit';
-import type { Session, User } from '$types/user';
+import type { Session, User } from '$lib/user/user';
+import type { ServerLoadEvent } from '@sveltejs/kit';
 
 import { newCookieSession } from '$lib/session';
 
 import { json, error } from '@sveltejs/kit';
 import { Validator } from '$lib/server/telegram';
 
-function createOrUpdateUser(user: User) {
-
-}
-
-export const GET: RequestHandler = async ({ url, cookies, locals }) => {
+export const GET: RequestHandler = async ({ url, cookies, locals }: ServerLoadEvent) => {
   // if session exists, return it
   if (locals.session) {
     return json(locals.session);

@@ -18,4 +18,4 @@ function createNavStack() {
   };
 }
 
-export const navStack = createNavStack();
+export const NavStack = createNavStack();

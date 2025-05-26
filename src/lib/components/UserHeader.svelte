@@ -1,12 +1,10 @@
 <script lang="ts">
   import { Avatar } from "@skeletonlabs/skeleton";
-  import type { User } from "$types/user";
+  import type { User } from "$lib/user/user";
 
   export let user: User | null = null;
   export let loading: boolean = false;
   export let error: string | null = null;
-
-  console.log("UserHeader", { user, loading, error });
 </script>
 
 {#if error}

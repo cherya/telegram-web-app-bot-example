@@ -7,15 +7,15 @@
 {#if !characters || characters.length === 0}
   <div>No characters found. Create the first one!</div>
 {:else}
-  <ul>
+  <ul class="list list-nav">
     {#each characters as char (char.id)}
       <li style="margin-bottom: 12px;">
         <a
           href={`/character/${char.id}`}
-          style="text-decoration: none; color: #333;"
+          class="flex-auto items-center space-x-2 rounded-md p-2 bg-secondary-500"
         >
           <strong>{char.name}</strong>
-          <span style="color: #888;">({char.id})</span>
+          <span>({char.id})</span>
         </a>
       </li>
     {/each}

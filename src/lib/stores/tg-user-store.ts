@@ -1,7 +1,7 @@
 import { useAsyncStore } from '$lib/stores/use-async-store'
 import { CheckInitData } from '$lib/user/api'
 import { GetCharacters } from '$lib/character/api'
-import type { User } from '$types/user'
+import type { User } from '$lib/user/user'
 import type { CharacterData } from '$lib/character/types'
 
 const name = 'tg-user'
@@ -26,7 +26,7 @@ export const initUser = async (store: {
 }, initialData: string) => {
   const current = store.get()
 
-  if (current.data?.valid) {
+  if (current.data?.user) {
     // already valid, skip re-fetch
     return
   }
@@ -40,7 +40,6 @@ export const initUser = async (store: {
     store.set({
       loading: false, error: null, data: {
         user: user.user,
-        valid: user.valid,
         characters: characters
       }
     })
