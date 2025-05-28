@@ -35,6 +35,7 @@ export type CharacterData = {
   inventory: Item[]
   equipped: { [K in Slot]: Item | null }
   currencies: Currency[]
+  currentActivity: string | null
 
   lastSyncAt?: number
 }

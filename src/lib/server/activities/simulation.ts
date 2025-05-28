@@ -1,19 +1,24 @@
 import { Character } from '$lib/character/character'
 import { Activities } from '$lib/activities/activities-list'
 import type { Activity } from '$lib/activities/types'
-import { simulateActivityTick } from '$lib/activities/activities'
+import { activityTick } from '$lib/activities/activities'
 
 export function runServerSimulation(character: Character, now: number): Character {
-  let result = structuredClone(character)
-  let currentTime = result.lastSyncAt
-  let activity: Activity | undefined = result.currentActivity ? Activities[result.currentActivity] : undefined
+  const startedAt = now;
+  let charClone = structuredClone(character)
+  let currentTime = charClone.lastSyncAt
+  let activity: Activity | undefined = charClone.currentActivity ? Activities[charClone.currentActivity] : undefined
+
+  console.log(`Simulating character ${charClone.name} from ${charClone.lastSyncAt} to ${Date.now()} (${Date.now() - charClone.lastSyncAt})`);
 
   while (currentTime + activity.baseTickDuration <= now) {
-    currentTime += Activities[result.currentActivity!].baseTickDuration
-    result = simulateActivityTick(result, result.currentActivity!, new Date(currentTime))
+    currentTime += Activities[charClone.currentActivity!].baseTickDuration
+    charClone = activityTick(charClone, charClone.currentActivity!, new Date(currentTime))
+    charClone.lastSyncAt = currentTime
   }
 
-  result.lastSyncAt = now
-  return result
+  console.log(`Character ${charClone.name} simulation took ${(Date.now() - startedAt) / 1000}s`);
+
+  return charClone
 }
 

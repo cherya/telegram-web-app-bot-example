@@ -22,6 +22,7 @@ export class Character {
     this.equipped = data.equipped
     this.currencies = data.currencies
     this.lastSyncAt = data.lastSyncAt
+    this.currentActivity = data.currentActivity || null
   }
 
   getSkill(name: string) {
@@ -93,6 +94,7 @@ export function GenerateRandomCharacter(level: number): CharacterData {
     inventory,
     equipped,
     currencies,
+    currentActivity: null,
     lastSyncAt: Date.now(),
   };
 }

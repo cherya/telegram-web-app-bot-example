@@ -3,7 +3,8 @@ import { Character } from '$lib/character/character';
 import { useAsyncStore } from '$lib/stores/use-async-store'
 import { GetCharacterById } from '$lib/character/api'
 import { Activities } from '$lib/activities/activities-list'
-import { simulateActivityTick } from '$lib/activities/activities'
+import { activityTick } from '$lib/activities/activities'
+import { writable } from 'svelte/store';
 
 const name = 'character'
 
@@ -15,37 +16,85 @@ export interface CharacterStoreState {
 
 export const CharStore = function (initialData: CharacterStoreState = { loading: true, data: {} as CharacterData }) {
   const store = useAsyncStore(name, initialData)
-  const { update } = store
+  const { get, update } = store
 
+  const progress = writable(0)
+
+  let lastTick = initialData.data.lastSyncAt
+  let animFrame: any
   let interval: ReturnType<typeof setInterval>
+  let tickDuration = 5000 // Default tick duration in milliseconds
+
+  function animateProgress() {
+    const now = Date.now()
+    const elapsed = now - lastTick
+    const p = Math.min(elapsed / tickDuration, 1)
+    progress.set(p)
+    animFrame = requestAnimationFrame(animateProgress)
+  }
 
   function startActivity(activityId: string) {
-    if (interval) return
+    let char = store.get().data
 
-    let char = new Character(store.get().data)
+    if (char.currentActivity !== activityId) {
+      stopActivity()
+    }
+
+    update((state) => ({ ...state, data: { ...char, currentActivity: activityId } }))
+
+    char = store.get().data
 
     console.log(`Starting activity: ${activityId}`)
+    animFrame = requestAnimationFrame(animateProgress)
 
     const activity = Activities[activityId]
 
-    interval = setInterval(() => {
-      char = simulateActivityTick(char, activityId, new Date())
+    tickDuration = activity.baseTickDuration
 
+    const now = Date.now()
+    const elapsed = now - lastTick
+    const firstTickDelay = Math.max(tickDuration - elapsed, 0)
+
+    // First tick (may be shorter)
+    interval = setTimeout(() => {
+      let char = store.get().data
+
+      lastTick = Date.now()
+      char = activityTick(char, activityId, new Date())
       console.log(`Activity tick: ${activityId}`, char)
-
       update((state) => ({ ...state, data: { ...char } }))
-    }, activity.baseTickDuration)
+
+      // Subsequent ticks at normal interval
+      interval = setInterval(() => {
+        let char = new Character(store.get().data)
+
+        lastTick = Date.now()
+        char = activityTick(char, activityId, new Date())
+        console.log(`Activity tick: ${activityId}`, char)
+        update((state) => ({ ...state, data: { ...char } }))
+      }, tickDuration)
+    }, firstTickDelay)
   }
 
   function stopActivity() {
     clearInterval(interval)
     interval = undefined
+    lastTick = Date.now()
+
+    let char = store.get().data
+
+    console.log(`Stopping activity: ${char.currentActivity}`)
+
+    update((state) => ({ ...state, data: { ...char, currentActivity: null } }))
+
+    cancelAnimationFrame(animFrame)
   }
 
   return {
     startActivity,
     stopActivity,
     ...store,
+    progress,
   }
 }
 
