@@ -19,7 +19,7 @@ export async function GET({ locals, params }: ServerLoadEvent) {
   }
 
   if (data && data.currentActivity) {
-    simulated = runServerSimulation(char, Date.now());
+    simulated = runServerSimulation(char, [], Date.now());
   }
 
   await characterStore.set(String(locals.session.user.id), { ...simulated });

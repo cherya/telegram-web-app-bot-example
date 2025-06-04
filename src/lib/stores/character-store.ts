@@ -4,14 +4,88 @@ import { useAsyncStore } from '$lib/stores/use-async-store';
 import { Activities } from '$lib/activities/activities-list';
 import { activityTick } from '$lib/activities/activities';
 import { writable, type Writable } from 'svelte/store';
+import { browser } from '$app/environment';
+import type { ActivityTimelineEntry } from '$lib/activities/types';
 
 const STORE_NAME = 'character';
+const TIMELINE_STORAGE_KEY = 'character_timeline';
 const DEFAULT_TICK_DURATION = 5000;
 
 export interface CharacterStoreState {
   loading: boolean;
   error?: string;
   data: CharacterData;
+}
+
+class ActivityTimeline {
+  private timeline: ActivityTimelineEntry[] = [];
+
+  constructor() {
+    if (browser) {
+      this.loadTimeline();
+    }
+  }
+
+  private loadTimeline(): void {
+    const stored = localStorage.getItem(TIMELINE_STORAGE_KEY);
+    if (stored) {
+      try {
+        this.timeline = JSON.parse(stored);
+      } catch (e) {
+        console.error('Failed to load activity timeline:', e);
+        this.timeline = [];
+      }
+    }
+  }
+
+  private saveTimeline(): void {
+    try {
+      localStorage.setItem(TIMELINE_STORAGE_KEY, JSON.stringify(this.timeline));
+    } catch (e) {
+      console.error('Failed to save activity timeline:', e);
+    }
+  }
+
+  public recordActivityStart(activityId: string): void {
+    console.log(`Recording activity start: ${activityId}`, this.timeline);
+    // Close any unclosed activities
+    this.timeline = this.timeline.map(entry =>
+      entry.endTime ? entry : { ...entry, endTime: Date.now() }
+    );
+
+    // Add new activity
+    this.timeline.push({
+      activityId,
+      startTime: Date.now()
+    });
+
+    this.saveTimeline();
+  }
+
+  public recordActivityStop(): void {
+    if (this.timeline.length > 0) {
+      const lastEntry = this.timeline[this.timeline.length - 1];
+      if (!lastEntry.endTime) {
+        lastEntry.endTime = Date.now();
+        this.saveTimeline();
+      }
+    }
+  }
+
+  public getTimeline(): ActivityTimelineEntry[] {
+    return [...this.timeline];
+  }
+
+  public clearTimeline(): void {
+    try {
+      localStorage.setItem(TIMELINE_STORAGE_KEY, '[]');
+      this.timeline = [];
+    } catch (e) {
+      console.error('Failed to clear activity timeline:', e);
+    }
+
+    console.log('Activity timeline cleared', this.timeline);
+  }
 }
 
 interface ActivityManager {
@@ -25,6 +99,8 @@ class CharacterActivityManager implements ActivityManager {
   private interval: ReturnType<typeof setInterval> | null = null;
   private tickDuration: number = DEFAULT_TICK_DURATION;
   private lastTick: number;
+
+  public timeline: ActivityTimeline;
   public progress: Writable<number>;
 
   constructor(
@@ -33,6 +109,7 @@ class CharacterActivityManager implements ActivityManager {
   ) {
     this.lastTick = initialLastSync;
     this.progress = writable(0);
+    this.timeline = new ActivityTimeline();
   }
 
   private animateProgress = () => {
@@ -56,6 +133,8 @@ class CharacterActivityManager implements ActivityManager {
     if (currentState.currentActivity !== activityId) {
       this.stop();
     }
+
+    this.timeline.recordActivityStart(activityId);
 
     this.store.update(state => ({
       ...state,
@@ -87,6 +166,8 @@ class CharacterActivityManager implements ActivityManager {
       this.interval = null;
     }
 
+    this.timeline.recordActivityStop();
+
     if (this.animFrame) {
       cancelAnimationFrame(this.animFrame);
       this.animFrame = null;
@@ -117,7 +198,9 @@ export function CharStore(
     ...store,
     startActivity: activityManager.start.bind(activityManager),
     stopActivity: activityManager.stop.bind(activityManager),
-    progress: activityManager.progress
+    progress: activityManager.progress,
+    getActivityTimeline: () => activityManager.timeline.getTimeline(),
+    clearActivityTimeline: () => activityManager.timeline.clearTimeline(),
   };
 }
 

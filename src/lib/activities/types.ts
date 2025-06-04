@@ -8,3 +8,9 @@ export type Activity = {
   seed?: string
   tick: (character: Character, t: Date) => Character
 }
+
+export type ActivityTimelineEntry = {
+  activityId: string | null;
+  startTime: number;  // Unix timestamp in ms
+  endTime?: number;   // Unix timestamp in ms
+};

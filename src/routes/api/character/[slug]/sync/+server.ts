@@ -14,12 +14,14 @@ export async function POST({ locals, params, request }: ServerLoadEvent) {
   const char = new Character(data);
   let simulated = char;
 
+  const activityTimeline = await request.json();
+
   if (data && !data.lastSyncAt) {
     data.lastSyncAt = Date.now();
   }
 
   if (data && data.currentActivity) {
-    simulated = runServerSimulation(char, Date.now());
+    simulated = runServerSimulation(char, activityTimeline, Date.now());
   }
 
   await characterStore.set(String(locals.session.user.id), { ...simulated });

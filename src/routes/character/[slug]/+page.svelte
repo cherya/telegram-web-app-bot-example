@@ -2,6 +2,7 @@
   import { CharStore } from "$lib/stores/character-store";
   import { ProgressBar } from "@skeletonlabs/skeleton";
   import { onMount } from "svelte";
+  import { SyncCharacter } from "$lib/character/api";
 
   export let data; // see src/routes/character/[slug]/+page.server.js
   const charStore = CharStore(data.character);
@@ -9,14 +10,33 @@
   $charStore = data.character;
 
   const progress = charStore.progress;
+  const charSyncTimeout = 15000;
+  let syncInterval = null;
 
   onMount(() => {
+    syncInterval = setInterval(async () => {
+      let char = charStore.get().data;
+      if (!char || !char.id) {
+        return;
+      }
+
+      char = await SyncCharacter(char.id, charStore.getActivityTimeline());
+      charStore.clearActivityTimeline();
+
+      charStore.set({
+        data: char,
+        loading: false,
+        error: null,
+      });
+    }, charSyncTimeout);
+
     const activity = $charStore.data.currentActivity;
     if (activity) {
       charStore.startActivity(activity);
     }
 
     return () => {
+      clearInterval(syncInterval);
       charStore.stopActivity();
     };
   });
