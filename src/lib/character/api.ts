@@ -39,3 +39,22 @@ export async function GetCharacters(fetchFn?: typeof fetch): Promise<CharacterDa
 
   return await resp.json();
 }
+
+export async function SyncCharacter(charId: string, fetchFn?: typeof fetch): Promise<CharacterData> {
+  const _fetch = fetchFn ?? fetch
+
+  const resp = await _fetch(`/api/character/${charId}/sync`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'accept': 'application/json'
+    }
+  });
+
+  if (!resp.ok) {
+    const respData = await resp.json();
+    throw new Error(`Cannot sync character: ${respData.message}`)
+  }
+
+  return await resp.json();
+}

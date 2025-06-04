@@ -1,120 +1,123 @@
 import type { CharacterData } from '$lib/character/types';
 import { Character } from '$lib/character/character';
-import { useAsyncStore } from '$lib/stores/use-async-store'
-import { GetCharacterById } from '$lib/character/api'
-import { Activities } from '$lib/activities/activities-list'
-import { activityTick } from '$lib/activities/activities'
-import { writable } from 'svelte/store';
+import { useAsyncStore } from '$lib/stores/use-async-store';
+import { Activities } from '$lib/activities/activities-list';
+import { activityTick } from '$lib/activities/activities';
+import { writable, type Writable } from 'svelte/store';
 
-const name = 'character'
+const STORE_NAME = 'character';
+const DEFAULT_TICK_DURATION = 5000;
 
 export interface CharacterStoreState {
-  loading: boolean
-  error?: string
-  data: CharacterData
+  loading: boolean;
+  error?: string;
+  data: CharacterData;
 }
 
-export const CharStore = function (initialData: CharacterStoreState = { loading: true, data: {} as CharacterData }) {
-  const store = useAsyncStore(name, initialData)
-  const { get, update } = store
+interface ActivityManager {
+  start: (activityId: string) => void;
+  stop: () => void;
+  progress: Writable<number>;
+}
 
-  const progress = writable(0)
+class CharacterActivityManager implements ActivityManager {
+  private animFrame: number | null = null;
+  private interval: ReturnType<typeof setInterval> | null = null;
+  private tickDuration: number = DEFAULT_TICK_DURATION;
+  private lastTick: number;
+  public progress: Writable<number>;
 
-  let lastTick = initialData.data.lastSyncAt
-  let animFrame: any
-  let interval: ReturnType<typeof setInterval>
-  let tickDuration = 5000 // Default tick duration in milliseconds
-
-  function animateProgress() {
-    const now = Date.now()
-    const elapsed = now - lastTick
-    const p = Math.min(elapsed / tickDuration, 1)
-    progress.set(p)
-    animFrame = requestAnimationFrame(animateProgress)
+  constructor(
+    private store: ReturnType<typeof useAsyncStore>,
+    initialLastSync: number
+  ) {
+    this.lastTick = initialLastSync;
+    this.progress = writable(0);
   }
 
-  function startActivity(activityId: string) {
-    let char = store.get().data
+  private animateProgress = () => {
+    const now = Date.now();
+    const elapsed = now - this.lastTick;
+    const progressValue = Math.min(elapsed / this.tickDuration, 1);
+    this.progress.set(progressValue);
+    this.animFrame = requestAnimationFrame(this.animateProgress);
+  };
 
-    if (char.currentActivity !== activityId) {
-      stopActivity()
+  private handleActivityTick = () => {
+    const char = new Character(this.store.get().data);
+    this.lastTick = Date.now();
+    const updatedChar = activityTick(char, char.currentActivity, new Date());
+    this.store.update(state => ({ ...state, data: { ...updatedChar } }));
+  };
+
+  public start(activityId: string): void {
+    const currentState = this.store.get().data;
+
+    if (currentState.currentActivity !== activityId) {
+      this.stop();
     }
 
-    update((state) => ({ ...state, data: { ...char, currentActivity: activityId } }))
+    this.store.update(state => ({
+      ...state,
+      data: { ...currentState, currentActivity: activityId }
+    }));
 
-    char = store.get().data
+    console.log(`Starting activity: ${activityId}`);
 
-    console.log(`Starting activity: ${activityId}`)
-    animFrame = requestAnimationFrame(animateProgress)
+    const activity = Activities[activityId];
+    this.tickDuration = activity.baseTickDuration;
 
-    const activity = Activities[activityId]
+    this.animFrame = requestAnimationFrame(this.animateProgress);
 
-    tickDuration = activity.baseTickDuration
+    const now = Date.now();
+    const elapsed = now - this.lastTick;
+    const firstTickDelay = Math.max(this.tickDuration - elapsed, 0);
 
-    const now = Date.now()
-    const elapsed = now - lastTick
-    const firstTickDelay = Math.max(tickDuration - elapsed, 0)
-
-    // First tick (may be shorter)
-    interval = setTimeout(() => {
-      let char = store.get().data
-
-      lastTick = Date.now()
-      char = activityTick(char, activityId, new Date())
-      console.log(`Activity tick: ${activityId}`, char)
-      update((state) => ({ ...state, data: { ...char } }))
-
-      // Subsequent ticks at normal interval
-      interval = setInterval(() => {
-        let char = new Character(store.get().data)
-
-        lastTick = Date.now()
-        char = activityTick(char, activityId, new Date())
-        console.log(`Activity tick: ${activityId}`, char)
-        update((state) => ({ ...state, data: { ...char } }))
-      }, tickDuration)
-    }, firstTickDelay)
+    // Schedule first tick
+    this.interval = setTimeout(() => {
+      this.handleActivityTick();
+      // Set up subsequent ticks
+      this.interval = setInterval(this.handleActivityTick, this.tickDuration);
+    }, firstTickDelay);
   }
 
-  function stopActivity() {
-    clearInterval(interval)
-    interval = undefined
-    lastTick = Date.now()
+  public stop(): void {
+    if (this.interval) {
+      clearInterval(this.interval);
+      this.interval = null;
+    }
 
-    let char = store.get().data
+    if (this.animFrame) {
+      cancelAnimationFrame(this.animFrame);
+      this.animFrame = null;
+    }
 
-    console.log(`Stopping activity: ${char.currentActivity}`)
+    this.lastTick = Date.now();
+    const currentState = this.store.get().data;
 
-    update((state) => ({ ...state, data: { ...char, currentActivity: null } }))
+    console.log(`Stopping activity: ${currentState.currentActivity}`);
 
-    cancelAnimationFrame(animFrame)
+    this.store.update(state => ({
+      ...state,
+      data: {
+        ...currentState,
+        currentActivity: null
+      }
+    }));
   }
+}
+
+export function CharStore(
+  initialData: CharacterStoreState = { loading: true, data: {} as CharacterData }
+) {
+  const store = useAsyncStore(STORE_NAME, initialData);
+  const activityManager = new CharacterActivityManager(store, initialData.data.lastSyncAt);
 
   return {
-    startActivity,
-    stopActivity,
     ...store,
-    progress,
-  }
+    startActivity: activityManager.start.bind(activityManager),
+    stopActivity: activityManager.stop.bind(activityManager),
+    progress: activityManager.progress
+  };
 }
 
-export const initCharacter = async (store: {
-  get: () => CharacterStoreState
-  set: (state: CharacterStoreState) => void
-}, characterId: string) => {
-  const current = store.get()
-
-  if (current.data?.id) {
-    // already valid, skip re-fetch
-    return
-  }
-
-  store.set({ loading: true, error: null, data: {} as CharacterData })
-
-  try {
-    const resp = await GetCharacterById(characterId)
-    store.set({ loading: false, error: null, data: resp })
-  } catch (err) {
-    store.set({ loading: false, error: String(err), data: {} as CharacterData })
-  }
-}

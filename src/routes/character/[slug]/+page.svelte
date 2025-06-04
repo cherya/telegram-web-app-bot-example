@@ -4,7 +4,6 @@
   import { onMount } from "svelte";
 
   export let data; // see src/routes/character/[slug]/+page.server.js
-
   const charStore = CharStore(data.character);
 
   $charStore = data.character;
@@ -15,8 +14,6 @@
     const activity = $charStore.data.currentActivity;
     if (activity) {
       charStore.startActivity(activity);
-    } else {
-      console.log("No current activity to resume.");
     }
 
     return () => {
@@ -25,7 +22,6 @@
   });
 
   function startActivity(skillName: string) {
-    console.log(`Starting activity for skill: ${skillName}`);
     charStore.startActivity(skillName);
   }
 </script>
